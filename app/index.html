@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Todo App</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>As minhas tarefas</h1>
+
+    <form id="todo-form" data-testid="todo-form">
+      <label for="new-todo" class="sr-only">Nova tarefa</label>
+      <input
+        id="new-todo"
+        data-testid="new-todo-input"
+        type="text"
+        placeholder="O que é preciso fazer?"
+        autocomplete="off"
+        maxlength="100"
+      />
+      <button type="submit" data-testid="add-todo-button">Adicionar</button>
+    </form>
+    <p id="error" class="error" role="alert" data-testid="error-message" hidden></p>
+
+    <nav class="filters" aria-label="Filtros">
+      <button type="button" data-filter="all" data-testid="filter-all" class="active">Todas</button>
+      <button type="button" data-filter="active" data-testid="filter-active">Por fazer</button>
+      <button type="button" data-filter="completed" data-testid="filter-completed">Concluídas</button>
+    </nav>
+
+    <ul id="todo-list" data-testid="todo-list"></ul>
+
+    <p id="empty" class="empty" data-testid="empty-state">Ainda não tens tarefas 🎉</p>
+
+    <footer class="footer">
+      <span id="counter" data-testid="todo-counter">0 tarefas por fazer</span>
+      <button type="button" id="clear-completed" data-testid="clear-completed">Limpar concluídas</button>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

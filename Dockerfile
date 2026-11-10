@@ -26,13 +26,13 @@ RUN mkdir -p /app/data && chown -R node:node /app/data
 VOLUME ["/app/data"]
 
 ENV NODE_ENV=production \
-    PORT=3000 \
+    PORT=9000 \
     DB_FILE=/app/data/app.db
 
 USER node
-EXPOSE 3000
+EXPOSE 9000
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget -qO- http://localhost:3000/api/health || exit 1
+  CMD wget -qO- http://localhost:9000/api/health || exit 1
 
 CMD ["node", "--disable-warning=ExperimentalWarning", "dist/server.js"]

@@ -1,8 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
-// Os testes usam um servidor e uma base de dados próprios (porta 3001, data/test.db),
-// para não mexerem nos dados com que trabalhas em `npm run dev` (porta 3000).
-const TEST_PORT = 3001;
+// Os testes usam um servidor e uma base de dados próprios (porta 9100, data/test.db),
+// para não mexerem nos dados com que trabalhas em `npm run dev` (porta 9000).
+const TEST_PORT = 9100;
 
 // Com BASE_URL definido (ex.: o container de testes em http://localhost:8081),
 // o Playwright testa esse servidor e não arranca o local.

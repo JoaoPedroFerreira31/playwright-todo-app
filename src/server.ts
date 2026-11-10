@@ -2,7 +2,7 @@ import app from './app';
 import { DB_FILE } from './db';
 import { DEMO_USER, seedIfEmpty } from './seed';
 
-const PORT = Number(process.env.PORT) || 3000;
+const PORT = Number(process.env.PORT) || 9000;
 
 seedIfEmpty();
 

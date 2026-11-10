@@ -3,7 +3,7 @@ services:
     build: .
     container_name: playwright-todo
     ports:
-      - "8080:3000" # http://localhost:8080
+      - "8080:9000" # http://localhost:8080
     volumes:
       - todo-data:/app/data
     restart: unless-stopped
@@ -19,7 +19,7 @@ services:
     environment:
       NODE_ENV: test
     ports:
-      - "8081:3000"
+      - "8081:9000"
     volumes:
       - type: tmpfs
         target: /app/data

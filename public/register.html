@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Criar conta · Todo App</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main class="container narrow">
+    <h1>Criar conta</h1>
+
+    <form id="register-form" class="auth-form" data-testid="register-form" novalidate>
+      <label>
+        Nome
+        <input type="text" name="name" data-testid="register-name" autocomplete="name" required />
+      </label>
+      <label>
+        Email
+        <input type="email" name="email" data-testid="register-email" autocomplete="username" required />
+      </label>
+      <label>
+        Password
+        <input type="password" name="password" data-testid="register-password" autocomplete="new-password" required />
+      </label>
+      <label>
+        Confirmar password
+        <input type="password" name="confirm" data-testid="register-confirm" autocomplete="new-password" required />
+      </label>
+      <button type="submit" class="primary" data-testid="register-submit">Criar conta</button>
+      <p id="error" class="error" role="alert" data-testid="register-error" hidden></p>
+    </form>
+
+    <p class="muted">Já tens conta? <a href="/login" data-testid="go-to-login">Entrar</a></p>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script>
+    const form = document.getElementById('register-form');
+    const errorEl = document.getElementById('error');
+
+    function showError(message) {
+      errorEl.textContent = message;
+      errorEl.hidden = false;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorEl.hidden = true;
+      const { name, email, password, confirm } = Object.fromEntries(new FormData(form));
+
+      if (password !== confirm) return showError('As passwords não coincidem.');
+
+      const button = form.querySelector('button');
+      button.disabled = true;
+      try {
+        await api('/api/auth/register', { method: 'POST', body: { name, email, password } });
+        window.location.href = '/';
+      } catch (err) {
+        showError(err.message);
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

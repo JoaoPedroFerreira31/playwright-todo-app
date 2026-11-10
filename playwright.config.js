@@ -1,24 +1,39 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
 
+// Os testes usam um servidor e uma base de dados próprios (porta 3001, data/test.db),
+// para não mexerem nos dados com que trabalhas em `npm run dev` (porta 3000).
+const TEST_PORT = 3001;
+
+// Com BASE_URL definido (ex.: o container de testes em http://localhost:8081),
+// o Playwright testa esse servidor e não arranca o local.
+const EXTERNAL_URL = process.env.BASE_URL;
+
 module.exports = defineConfig({
   testDir: './tests',
-  fullyParallel: true,
+  // Todos os testes partilham a mesma BD e fazem reset dela, por isso correm um de cada vez.
+  fullyParallel: false,
+  workers: 1,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:3000',
-    trace: 'on-first-retry',
+    baseURL: EXTERNAL_URL || `http://localhost:${TEST_PORT}`,
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    // Descomenta para testar noutros browsers:
+    // Descomenta para testar noutros browsers (precisas de `npx playwright install`):
     // { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
     // { name: 'webkit', use: { ...devices['Desktop Safari'] } },
   ],
-  // O Playwright arranca o servidor automaticamente antes dos testes
-  webServer: {
-    command: 'node server.js',
-    url: 'http://localhost:3000',
-    reuseExistingServer: true,
+  webServer: EXTERNAL_URL ? undefined : {
+    command: 'node --disable-warning=ExperimentalWarning src/server.js',
+    url: `http://localhost:${TEST_PORT}/api/health`,
+    reuseExistingServer: !process.env.CI,
+    env: {
+      NODE_ENV: 'test', // ativa POST /api/test/reset
+      PORT: String(TEST_PORT),
+      DB_FILE: 'data/test.db',
+    },
   },
 });

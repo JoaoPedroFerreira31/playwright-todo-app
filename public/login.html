@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entrar · Todo App</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main class="container narrow">
+    <h1>Entrar</h1>
+
+    <form id="login-form" class="auth-form" data-testid="login-form" novalidate>
+      <label>
+        Email
+        <input type="email" name="email" data-testid="login-email" autocomplete="username" required />
+      </label>
+      <label>
+        Password
+        <input type="password" name="password" data-testid="login-password" autocomplete="current-password" required />
+      </label>
+      <button type="submit" class="primary" data-testid="login-submit">Entrar</button>
+      <p id="error" class="error" role="alert" data-testid="login-error" hidden></p>
+    </form>
+
+    <p class="muted">Ainda não tens conta? <a href="/register" data-testid="go-to-register">Criar conta</a></p>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script>
+    const form = document.getElementById('login-form');
+    const errorEl = document.getElementById('error');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorEl.hidden = true;
+      const { email, password } = Object.fromEntries(new FormData(form));
+
+      if (!email || !password) {
+        errorEl.textContent = 'Preenche o email e a password.';
+        errorEl.hidden = false;
+        return;
+      }
+
+      const button = form.querySelector('button');
+      button.disabled = true;
+      try {
+        await api('/api/auth/login', { method: 'POST', body: { email, password } });
+        window.location.href = '/';
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.hidden = false;
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

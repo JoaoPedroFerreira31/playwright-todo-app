@@ -1,0 +1,30 @@
+services:
+  app:
+    build: .
+    container_name: playwright-todo
+    ports:
+      - "8080:3000" # http://localhost:8080
+    volumes:
+      - todo-data:/app/data
+    restart: unless-stopped
+
+  # Servidor em modo de teste (ativa POST /api/test/reset), para correres o Playwright contra o container:
+  #   docker compose --profile test up -d --build
+  #   PowerShell:  $env:BASE_URL="http://localhost:8081"; npx playwright test
+  #   Git Bash:    BASE_URL=http://localhost:8081 npx playwright test
+  app-test:
+    build: .
+    container_name: playwright-todo-test
+    profiles: ["test"]
+    environment:
+      NODE_ENV: test
+    ports:
+      - "8081:3000"
+    volumes:
+      - type: tmpfs
+        target: /app/data
+        tmpfs:
+          mode: 01777
+
+volumes:
+  todo-data:

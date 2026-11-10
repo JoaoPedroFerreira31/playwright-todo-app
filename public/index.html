@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Todo App</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main class="container">
+    <header class="topbar">
+      <h1>As minhas tarefas</h1>
+      <div class="user-box">
+        <span data-testid="user-name" id="user-name"></span>
+        <button type="button" id="logout" data-testid="logout-button">Sair</button>
+      </div>
+    </header>
+
+    <form id="todo-form" class="todo-form" data-testid="todo-form">
+      <label for="new-todo" class="sr-only">Nova tarefa</label>
+      <input
+        id="new-todo"
+        name="title"
+        data-testid="new-todo-input"
+        type="text"
+        placeholder="O que é preciso fazer?"
+        autocomplete="off"
+        maxlength="100"
+      />
+      <label for="new-priority" class="sr-only">Prioridade</label>
+      <select id="new-priority" name="priority" data-testid="new-todo-priority">
+        <option value="low">Baixa</option>
+        <option value="medium" selected>Média</option>
+        <option value="high">Alta</option>
+      </select>
+      <label for="new-due" class="sr-only">Data limite</label>
+      <input id="new-due" name="dueDate" type="date" data-testid="new-todo-due-date" />
+      <button type="submit" class="primary" data-testid="add-todo-button">Adicionar</button>
+    </form>
+    <p id="error" class="error" role="alert" data-testid="error-message" hidden></p>
+
+    <div class="toolbar">
+      <nav class="filters" aria-label="Filtros">
+        <button type="button" data-filter="all" data-testid="filter-all" class="active">Todas</button>
+        <button type="button" data-filter="active" data-testid="filter-active">Por fazer</button>
+        <button type="button" data-filter="completed" data-testid="filter-completed">Concluídas</button>
+      </nav>
+      <label for="search" class="sr-only">Pesquisar</label>
+      <input id="search" type="search" placeholder="Pesquisar…" data-testid="search-input" />
+    </div>
+
+    <p id="loading" class="loading" data-testid="loading">A carregar…</p>
+    <ul id="todo-list" data-testid="todo-list"></ul>
+    <p id="empty" class="empty" data-testid="empty-state" hidden></p>
+
+    <footer class="footer">
+      <span id="counter" data-testid="todo-counter"></span>
+      <button type="button" id="clear-completed" data-testid="clear-completed" hidden>Limpar concluídas</button>
+    </footer>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/todos.js"></script>
+</body>
+</html>

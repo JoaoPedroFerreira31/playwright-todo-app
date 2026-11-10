@@ -1,7 +1,6 @@
-// @ts-check
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
-// Utilizador criado pelo seed (src/seed.js)
+// Utilizador criado pelo seed (src/seed.ts)
 const DEMO = { email: 'demo@example.com', password: 'password123' };
 
 test.beforeEach(async ({ request, page }) => {

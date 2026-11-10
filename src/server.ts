@@ -1,6 +1,6 @@
-const app = require('./app');
-const { DB_FILE } = require('./db');
-const { seedIfEmpty, DEMO_USER } = require('./seed');
+import app from './app';
+import { DB_FILE } from './db';
+import { DEMO_USER, seedIfEmpty } from './seed';
 
 const PORT = Number(process.env.PORT) || 3000;
 

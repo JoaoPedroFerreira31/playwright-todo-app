@@ -34,34 +34,6 @@
     <p class="muted">Já tens conta? <a href="/login" data-testid="go-to-login">Entrar</a></p>
   </main>
 
-  <script src="/js/api.js"></script>
-  <script>
-    const form = document.getElementById('register-form');
-    const errorEl = document.getElementById('error');
-
-    function showError(message) {
-      errorEl.textContent = message;
-      errorEl.hidden = false;
-    }
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      errorEl.hidden = true;
-      const { name, email, password, confirm } = Object.fromEntries(new FormData(form));
-
-      if (password !== confirm) return showError('As passwords não coincidem.');
-
-      const button = form.querySelector('button');
-      button.disabled = true;
-      try {
-        await api('/api/auth/register', { method: 'POST', body: { name, email, password } });
-        window.location.href = '/';
-      } catch (err) {
-        showError(err.message);
-      } finally {
-        button.disabled = false;
-      }
-    });
-  </script>
+  <script type="module" src="/js/register.js"></script>
 </body>
 </html>

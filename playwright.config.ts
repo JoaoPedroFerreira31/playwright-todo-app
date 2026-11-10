@@ -1,5 +1,4 @@
-// @ts-check
-const { defineConfig, devices } = require('@playwright/test');
+import { defineConfig, devices } from '@playwright/test';
 
 // Os testes usam um servidor e uma base de dados próprios (porta 3001, data/test.db),
 // para não mexerem nos dados com que trabalhas em `npm run dev` (porta 3000).
@@ -9,7 +8,7 @@ const TEST_PORT = 3001;
 // o Playwright testa esse servidor e não arranca o local.
 const EXTERNAL_URL = process.env.BASE_URL;
 
-module.exports = defineConfig({
+export default defineConfig({
   testDir: './tests',
   // Todos os testes partilham a mesma BD e fazem reset dela, por isso correm um de cada vez.
   fullyParallel: false,
@@ -26,14 +25,18 @@ module.exports = defineConfig({
     // { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
     // { name: 'webkit', use: { ...devices['Desktop Safari'] } },
   ],
-  webServer: EXTERNAL_URL ? undefined : {
-    command: 'node --disable-warning=ExperimentalWarning src/server.js',
-    url: `http://localhost:${TEST_PORT}/api/health`,
-    reuseExistingServer: !process.env.CI,
-    env: {
-      NODE_ENV: 'test', // ativa POST /api/test/reset
-      PORT: String(TEST_PORT),
-      DB_FILE: 'data/test.db',
-    },
-  },
+  webServer: EXTERNAL_URL
+    ? undefined
+    : {
+        // Compila o frontend e arranca o servidor TypeScript diretamente com o tsx
+        command: 'npm run build:client && tsx src/server.ts',
+        url: `http://localhost:${TEST_PORT}/api/health`,
+        reuseExistingServer: !process.env.CI,
+        env: {
+          NODE_ENV: 'test', // ativa POST /api/test/reset
+          PORT: String(TEST_PORT),
+          DB_FILE: 'data/test.db',
+          NODE_OPTIONS: '--disable-warning=ExperimentalWarning',
+        },
+      },
 });

@@ -1,10 +1,12 @@
 # Playwright Todo
 
-A small todo app (Node + Express + SQLite) built for practising end-to-end testing with Playwright.
+A small todo app (TypeScript + Node + Express + SQLite) built for practising end-to-end testing with Playwright.
 
 ## Requirements
 
 - Node.js **22.13 or later** (uses the built-in `node:sqlite` module, so there is no database to install)
+
+Everything is written in TypeScript: the server (`src/`), the browser code (`client/`), the tests and the Playwright config.
 
 ## Getting started
 
@@ -18,8 +20,10 @@ Demo login (created automatically on first run): **demo@example.com / password12
 
 | Command            | What it does                                              |
 | ------------------ | --------------------------------------------------------- |
-| `npm run dev`      | Starts the app on port 3000 and restarts on code changes  |
-| `npm start`        | Starts the app without watch mode                         |
+| `npm run dev`      | Starts the app on port 3000; recompiles and restarts on code changes |
+| `npm run build`    | Compiles `client/` → `public/js/` and `src/` → `dist/`    |
+| `npm start`        | Runs the compiled server (`dist/`), run `npm run build` first |
+| `npm run typecheck`| Type-checks the server, tests and browser code            |
 | `npm run db:reset` | Wipes the development database and re-seeds it            |
 | `npm test`         | Runs the Playwright tests                                 |
 | `npm run test:ui`  | Opens Playwright UI mode (the best way to learn)          |
@@ -63,27 +67,35 @@ When `BASE_URL` is set, Playwright tests that server instead of starting a local
 ## Project structure
 
 ```
-src/
-  server.js          server entry point
-  app.js             Express: API routes and pages
-  db.js              SQLite connection + table creation
-  auth.js            passwords, sessions (cookie) and middleware
-  seed.js            sample data + reset
+src/                   server (compiled to dist/)
+  server.ts            server entry point
+  app.ts               Express: API routes and pages
+  db.ts                SQLite connection, tables + typed query helpers
+  auth.ts              passwords, sessions (cookie) and middleware
+  seed.ts              sample data + reset
+  types.ts             shared types (User, Todo, TodoList, …)
+  scripts/reset-db.ts  `npm run db:reset`
   routes/
-    auth.js          /api/auth/*
-    todos.js         /api/todos/*
-    testing.js       /api/test/reset (only with NODE_ENV=test)
-public/
-  index.html         todo list (requires login)
-  login.html         /login
-  register.html      /register
-  js/api.js          fetch helper
-  js/todos.js        todo page logic
+    auth.ts            /api/auth/*
+    todos.ts           /api/todos/*
+    testing.ts         /api/test/reset (only with NODE_ENV=test)
+client/                browser code (compiled to public/js/)
+  api.ts               fetch helper
+  login.ts             /login page
+  register.ts          /register page
+  todos.ts             todo page logic
+  types.ts             API response types
+public/                HTML + CSS served as-is (public/js/ is generated, not in git)
 tests/
-  todo.spec.js       UI tests (todos)
-  auth.spec.js       login / sign-up tests
-  api.spec.js        direct API tests
+  todo.spec.ts         UI tests (todos)
+  auth.spec.ts         login / sign-up tests
+  api.spec.ts          direct API tests
+tsconfig.json          type-checking for src/, tests/ and playwright.config.ts
+tsconfig.build.json    compiles src/ → dist/
+client/tsconfig.json   compiles client/ → public/js/ (DOM types, ES modules)
 ```
+
+Tests can import the server's types, e.g. `import type { TodoList } from '../src/types'`.
 
 ## Database
 
@@ -92,7 +104,7 @@ tests/
 | `npm run dev`      | `data/app.db`  | 3000 |
 | Playwright tests   | `data/test.db` | 3001 |
 
-Playwright starts the test server by itself (`webServer` in `playwright.config.js`).
+Playwright starts the test server by itself (`webServer` in `playwright.config.ts`): it builds `client/` and runs `src/server.ts` with `tsx`.
 To start each test from a clean state, call `POST /api/test/reset`:
 
 ```js

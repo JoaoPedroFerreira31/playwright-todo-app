@@ -8,7 +8,9 @@ test-results
 playwright-report
 blob-report
 playwright
-playwright.config.js
+playwright.config.ts
+dist
+public/js
 .env
 .env.*
 .git

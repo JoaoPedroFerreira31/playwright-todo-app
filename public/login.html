@@ -26,34 +26,6 @@
     <p class="muted">Ainda não tens conta? <a href="/register" data-testid="go-to-register">Criar conta</a></p>
   </main>
 
-  <script src="/js/api.js"></script>
-  <script>
-    const form = document.getElementById('login-form');
-    const errorEl = document.getElementById('error');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      errorEl.hidden = true;
-      const { email, password } = Object.fromEntries(new FormData(form));
-
-      if (!email || !password) {
-        errorEl.textContent = 'Preenche o email e a password.';
-        errorEl.hidden = false;
-        return;
-      }
-
-      const button = form.querySelector('button');
-      button.disabled = true;
-      try {
-        await api('/api/auth/login', { method: 'POST', body: { email, password } });
-        window.location.href = '/';
-      } catch (err) {
-        errorEl.textContent = err.message;
-        errorEl.hidden = false;
-      } finally {
-        button.disabled = false;
-      }
-    });
-  </script>
+  <script type="module" src="/js/login.js"></script>
 </body>
 </html>

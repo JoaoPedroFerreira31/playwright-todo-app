@@ -1,6 +1,6 @@
-// @ts-check
 // Testes à API diretamente, sem browser, usando o fixture `request`.
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
+import type { TodoList } from '../src/types';
 
 test.beforeEach(async ({ request }) => {
   await request.post('/api/test/reset');
@@ -15,7 +15,8 @@ test('GET /api/todos devolve as tarefas do seed', async ({ request }) => {
   const res = await request.get('/api/todos');
   expect(res.status()).toBe(200);
 
-  const body = await res.json();
+  // Os tipos do servidor (src/types.ts) também servem nos testes
+  const body: TodoList = await res.json();
   expect(body.total).toBe(4);
   expect(body.remaining).toBe(3);
 });

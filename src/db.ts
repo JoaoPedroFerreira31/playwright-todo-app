@@ -1,12 +1,14 @@
 // Base de dados SQLite usando o módulo nativo do Node (node:sqlite) — sem dependências a compilar.
-const fs = require('node:fs');
-const path = require('node:path');
-const { DatabaseSync } = require('node:sqlite');
+import fs from 'node:fs';
+import path from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
 
-const DB_FILE = process.env.DB_FILE || path.join(__dirname, '..', 'data', 'app.db');
+export type SqlParam = string | number | bigint | null;
+
+export const DB_FILE = process.env.DB_FILE || path.join(__dirname, '..', 'data', 'app.db');
 fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
 
-const db = new DatabaseSync(DB_FILE);
+export const db = new DatabaseSync(DB_FILE);
 db.exec('PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL;');
 
 db.exec(`
@@ -38,4 +40,20 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_todos_user ON todos(user_id);
 `);
 
-module.exports = { db, DB_FILE };
+// ---------- Helpers tipados ----------
+
+/** Devolve a primeira linha (ou undefined). */
+export function queryOne<T>(sql: string, ...params: SqlParam[]): T | undefined {
+  return db.prepare(sql).get(...params) as T | undefined;
+}
+
+/** Devolve todas as linhas. */
+export function queryAll<T>(sql: string, ...params: SqlParam[]): T[] {
+  return db.prepare(sql).all(...params) as T[];
+}
+
+/** Executa INSERT / UPDATE / DELETE. */
+export function execute(sql: string, ...params: SqlParam[]) {
+  const result = db.prepare(sql).run(...params);
+  return { changes: Number(result.changes), lastInsertRowid: Number(result.lastInsertRowid) };
+}

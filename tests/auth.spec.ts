@@ -1,9 +1,9 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage';
+import { test, expect } from '../fixtures/index';
 
 test.beforeEach(async ({ request }) => {
   await request.post('/api/test/reset');
 });
+
 
 // Teste de exemplo
 test('sem sessão, a página inicial redireciona para o login', async ({ page }) => {
@@ -11,37 +11,52 @@ test('sem sessão, a página inicial redireciona para o login', async ({ page })
   await expect(page).toHaveURL('/login');
 });
 
-test('login with wrong password shows error', async ({ page }) => {
-  const loginPage = new LoginPage(page);
+test('login with wrong password shows error', async ({ page, loginPage }) => {
+
 
   await loginPage.goto();
   await loginPage.login('demo@example.com', 'wrongpassword');
 
-  expect(page.locator('text=Email ou password incorretos.')).toBeVisible();
+  await expect(loginPage.errorMessage).toHaveText('Email ou password incorretos.');
 });
 
-test('login with empty fields shows error', async ({ page }) => {
-  const loginPage = new LoginPage(page);
+test('login with empty fields shows error', async ({ page, loginPage }) => {
 
   await loginPage.goto();
   await loginPage.login('', '');
 
-  expect(page.locator('text=Preenche o email e a password.')).toBeVisible();
+  await expect(loginPage.errorMessage).toHaveText('Preenche o email e a password.');
 });
 
-test('go to register page', async ({ page }) => {
-  const loginPage = new LoginPage(page);
+test('go to register page', async ({ page, loginPage }) => {
 
   await loginPage.goto();
   await loginPage.gotoRegisterPage();
-  await expect(page).toHaveURL('/register');
   
-  expect(page).toHaveTitle(/Criar conta/);  
+  await expect(page).toHaveURL('/register');
+  await expect(page).toHaveTitle(/Criar conta/);  
   
 });
 
-// Ideias de testes para escreveres:
-
 // - criar conta nova e ficar logo autenticado
+test('create new account and stay logged in', async ({ page, registerPage }) => {
+
+  await registerPage.goto();
+  await registerPage.register('New User', 'newuser@example.com', 'password123', 'password123');
+
+  await expect(page.getByRole('heading', { name: 'As minhas tarefas' })).toBeVisible();  
+
+});
+
 // - criar conta com email já existente (demo@example.com)
+test('create account with existing email shows error', async ({ page, registerPage }) => {
+
+  await registerPage.goto();
+  await registerPage.register('New User', 'demo@example.com', 'password123', 'password123');
+
+  await expect(registerPage.errorMessage).toHaveText('Já existe uma conta com esse email.');
+
+});
+
+// Ideias de testes para escreveres:
 // - passwords que não coincidem / password com menos de 8 caracteres

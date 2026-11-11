@@ -6,6 +6,7 @@ export class LoginPage {
   readonly passwordInput: Locator;
   readonly registerLink: Locator;
   readonly loginButton: Locator;
+  readonly errorMessage: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -13,6 +14,7 @@ export class LoginPage {
     this.passwordInput = page.getByTestId('login-password');
     this.loginButton = page.getByTestId('login-submit');
     this.registerLink = page.getByTestId('go-to-register');
+    this.errorMessage = page.getByRole('alert');
 
   }
 

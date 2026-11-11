@@ -20,7 +20,19 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { 
+      name: 'setup', 
+      testMatch: /.*\.setup\.ts/ 
+    },
+
+    { 
+      name: 'chromium', 
+      use: { 
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/user.json',
+      },
+      dependencies: ['setup'],
+    },
     // Descomenta para testar noutros browsers (precisas de `npx playwright install`):
     // { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
     // { name: 'webkit', use: { ...devices['Desktop Safari'] } },

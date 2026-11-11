@@ -1,9 +1,15 @@
 import { test, expect } from '../fixtures/index';
+import { createUserData } from '../factories/userFactory';
+
+// Reset storage state for this file to avoid being authenticated
+test.use({ storageState: { cookies: [], origins: [] } });
 
 test.beforeEach(async ({ request }) => {
   await request.post('/api/test/reset');
-});
 
+  const user = createUserData();
+  
+});
 
 // Teste de exemplo
 test('sem sessão, a página inicial redireciona para o login', async ({ page }) => {
@@ -12,15 +18,15 @@ test('sem sessão, a página inicial redireciona para o login', async ({ page })
 });
 
 test('login with wrong password shows error', async ({ page, loginPage }) => {
+  const user = createUserData();
 
-
-  await loginPage.goto();
-  await loginPage.login('demo@example.com', 'wrongpassword');
+  await loginPage.goto();  
+  await loginPage.login(user.email, 'wrongpassword');
 
   await expect(loginPage.errorMessage).toHaveText('Email ou password incorretos.');
 });
 
-test('login with empty fields shows error', async ({ page, loginPage }) => {
+test('login with empty fields shows error', async ({ page, loginPage }) => {  
 
   await loginPage.goto();
   await loginPage.login('', '');

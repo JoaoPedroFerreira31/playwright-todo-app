@@ -4,17 +4,16 @@ import { createUserData } from '../factories/userFactory';
 
 const authFile = path.join(__dirname, '../playwright/.auth/user.json');
 
-setup('authenticate', async ({ page, request }) => {  
-    const user = createUserData();
-    console.log(user);
+setup('authenticate', async ({ page }) => {  
+    const user = createUserData();    
 
-    const registerRes = await request.post('/api/auth/register', {
+    const registerRes = await page.request.post('/api/auth/register', {
         data: { name: user.name, email: user.email, password: user.password },
     });
 
     await expect(registerRes).toBeOK();
 
-    const loginRes = await request.post('/api/auth/login', {
+    const loginRes = await page.request.post('/api/auth/login', {
         data: { email: user.email, password: user.password },
     });
 

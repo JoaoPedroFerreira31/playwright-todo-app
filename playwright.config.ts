@@ -9,10 +9,9 @@ const TEST_PORT = 9100;
 const EXTERNAL_URL = process.env.BASE_URL;
 
 export default defineConfig({
-  testDir: './tests',
-  // Todos os testes partilham a mesma BD e fazem reset dela, por isso correm um de cada vez.
-  fullyParallel: false,
-  workers: 1,
+  testDir: './tests',  
+  fullyParallel: true,
+  workers: process.env.CI ? 2 : 4,
   reporter: 'html',
   use: {
     baseURL: EXTERNAL_URL || `http://localhost:${TEST_PORT}`,

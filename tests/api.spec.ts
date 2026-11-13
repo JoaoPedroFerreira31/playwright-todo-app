@@ -1,21 +1,30 @@
 // Testes à API diretamente, sem browser, usando o fixture `request`.
 import { test, expect } from '@playwright/test';
-import type { TodoList } from '../src/types';
+import { createUserData } from '../factories/userFactory';
+import { createTodoData } from '../factories/todoFactory';
+import type { Todo, TodoList } from '../src/types';
 
 test.beforeEach(async ({ request }) => {
-  await request.post('/api/test/reset');
-  // O cookie de sessão fica guardado no contexto do `request` para os pedidos seguintes
-  await request.post('/api/auth/login', {
-    data: { email: 'demo@example.com', password: 'password123' },
-  });
+  const user = createUserData();
+  const registerRes = await request.post('/api/auth/register', { data: user });
+
+  await expect(registerRes).toBeOK();  
 });
 
 // Teste de exemplo
-test('GET /api/todos devolve as tarefas do seed', async ({ request }) => {
-  const res = await request.get('/api/todos');
-  expect(res.status()).toBe(200);
+test('GET /api/todos devolve as tarefas', async ({ request }) => {
 
-  // Os tipos do servidor (src/types.ts) também servem nos testes
+  const todos: Todo[] = [];
+  for (let i = 0; i < 4; i++) {
+    const res = await request.post('/api/todos', { data: createTodoData() });
+    await expect(res).toBeOK();
+    todos.push(await res.json());
+  }
+  await expect(await request.patch(`/api/todos/${todos[0].id}`, { data: { completed: true } })).toBeOK();
+
+  const res = await request.get('/api/todos');
+  await expect(res).toBeOK();
+
   const body: TodoList = await res.json();
   expect(body.total).toBe(4);
   expect(body.remaining).toBe(3);

@@ -4,23 +4,17 @@ import { createUserData } from '../factories/userFactory';
 // Reset storage state for this file to avoid being authenticated
 test.use({ storageState: { cookies: [], origins: [] } });
 
-test.beforeEach(async ({ request }) => {
-  await request.post('/api/test/reset');
-
-  const user = createUserData();
-  
-});
-
 // Teste de exemplo
 test('sem sessão, a página inicial redireciona para o login', async ({ page }) => {
   await page.goto('/');
   await expect(page).toHaveURL('/login');
 });
 
-test('login with wrong password shows error', async ({ page, loginPage }) => {
+test('login with wrong password shows error', async ({ request, loginPage }) => {
   const user = createUserData();
+  await expect(await request.post('/api/auth/register', { data: user })).toBeOK();
 
-  await loginPage.goto();  
+  await loginPage.goto();
   await loginPage.login(user.email, 'wrongpassword');
 
   await expect(loginPage.errorMessage).toHaveText('Email ou password incorretos.');
@@ -47,21 +41,25 @@ test('go to register page', async ({ page, loginPage }) => {
 // - criar conta nova e ficar logo autenticado
 test('create new account and stay logged in', async ({ page, registerPage }) => {
 
+  const user = createUserData();
+  
   await registerPage.goto();
-  await registerPage.register('New User', 'newuser@example.com', 'password123', 'password123');
+  await registerPage.register(user.name, user.email, user.password, user.password);
 
   await expect(page.getByRole('heading', { name: 'As minhas tarefas' })).toBeVisible();  
 
 });
 
-// - criar conta com email já existente (demo@example.com)
-test('create account with existing email shows error', async ({ page, registerPage }) => {
+// - criar conta com email já existente
+test('create account with existing email shows error', async ({ request, registerPage }) => {
+  const existing = createUserData();
+  
+  await expect(await request.post('/api/auth/register', { data: existing })).toBeOK();
 
   await registerPage.goto();
-  await registerPage.register('New User', 'demo@example.com', 'password123', 'password123');
+  await registerPage.register('Outro Nome', existing.email, 'password123', 'password123');
 
   await expect(registerPage.errorMessage).toHaveText('Já existe uma conta com esse email.');
-
 });
 
 // Ideias de testes para escreveres:

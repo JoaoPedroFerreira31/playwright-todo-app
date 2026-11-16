@@ -9,7 +9,7 @@ const TEST_PORT = 9100;
 const EXTERNAL_URL = process.env.BASE_URL;
 
 export default defineConfig({
-  testDir: './tests',  
+  testDir: './tests',
   fullyParallel: true,
   workers: process.env.CI ? 2 : 4,
   reporter: 'html',
@@ -19,18 +19,19 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
   projects: [
-    { 
-      name: 'setup', 
-      testMatch: /.*\.setup\.ts/ 
-    },
+    // Padrão setup + storageState (ver tests/auth.setup.ts):
+    // { name: 'setup', testMatch: /.*\.setup\.ts/ },
+    // {
+    //   name: 'chromium',
+    //   use: { ...devices['Desktop Chrome'], storageState: 'playwright/.auth/user.json' },
+    //   dependencies: ['setup'],
+    // },
 
-    { 
-      name: 'chromium', 
-      use: { 
+    {
+      name: 'chromium',
+      use: {
         ...devices['Desktop Chrome'],
-        storageState: 'playwright/.auth/user.json',
       },
-      dependencies: ['setup'],
     },
     // Descomenta para testar noutros browsers (precisas de `npx playwright install`):
     // { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
@@ -39,15 +40,15 @@ export default defineConfig({
   webServer: EXTERNAL_URL
     ? undefined
     : {
-        // Compila o frontend e arranca o servidor TypeScript diretamente com o tsx
-        command: 'npm run build:client && tsx src/server.ts',
-        url: `http://localhost:${TEST_PORT}/api/health`,
-        reuseExistingServer: !process.env.CI,
-        env: {
-          NODE_ENV: 'test', // ativa POST /api/test/reset
-          PORT: String(TEST_PORT),
-          DB_FILE: 'data/test.db',
-          NODE_OPTIONS: '--disable-warning=ExperimentalWarning',
-        },
+      // Compila o frontend e arranca o servidor TypeScript diretamente com o tsx
+      command: 'npm run build:client && tsx src/server.ts',
+      url: `http://localhost:${TEST_PORT}/api/health`,
+      reuseExistingServer: !process.env.CI,
+      env: {
+        NODE_ENV: 'test', // ativa POST /api/test/reset
+        PORT: String(TEST_PORT),
+        DB_FILE: 'data/test.db',
+        NODE_OPTIONS: '--disable-warning=ExperimentalWarning',
       },
+    },
 });

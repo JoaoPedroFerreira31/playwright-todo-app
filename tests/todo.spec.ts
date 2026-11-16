@@ -5,19 +5,20 @@ import { test, expect } from '../fixtures/index';
 test('show tasks heading after login', async ({ page, user }) => {
   
   await page.goto('/');
-  await expect(page.getByTestId('user-name')).toBeVisible();
+  await expect(page.getByTestId('user-name')).toContainText(user.name);
   await expect(page.getByRole('heading', { name: 'As minhas tarefas' })).toBeVisible();
 
 });
 
 
-test('add new task and check it appears in the list', async ({ page, user, todoPage }) => {
+test('add new task and check it appears in the list', async ({ user, todoPage }) => {
   const todoData = createTodoData();
 
   await todoPage.goto();
-  await todoPage.createTodo(todoData.title, 'Alta', '2029-12-31');
+  await todoPage.createTodo(todoData.title, 'high', '2029-12-31');
 
-  await expect(page.getByTestId('todo-title').filter({ hasText: todoData.title })).toBeVisible();
+  await expect(todoPage.todoItem).toHaveCount(1);
+  await expect(todoPage.todoTitle.filter({ hasText: todoData.title })).toBeVisible();
 });
 
 test('add 4 tasks and check they appear in the list', async ({ page, todoPage, todo }) => {
@@ -26,7 +27,7 @@ test('add 4 tasks and check they appear in the list', async ({ page, todoPage, t
   }
   await todoPage.goto();
 
-  await expect(page.getByRole('listitem')).toHaveCount(4);
+  await expect(todoPage.todoItem).toHaveCount(4);
 
 });
 // Ideias de testes para escreveres:

@@ -28,6 +28,17 @@ test('login with empty fields shows error', async ({ page, loginPage }) => {
   await expect(loginPage.errorMessage).toHaveText('Preenche o email e a password.');
 });
 
+test('login with valid credentials redirects to /', {tag: '@smoke'}, async ({ request, page, loginPage }) => {
+  const user = createUserData();
+  await expect(await request.post('/api/auth/register', { data: user })).toBeOK();
+
+  await loginPage.goto();
+  await loginPage.login(user.email, user.password);
+  
+  await expect(page).toHaveURL('/');
+  await expect(page.getByTestId('user-name')).toContainText(user.name);
+});
+
 test('go to register page', async ({ page, loginPage }) => {
 
   await loginPage.goto();
@@ -35,11 +46,10 @@ test('go to register page', async ({ page, loginPage }) => {
   
   await expect(page).toHaveURL('/register');
   await expect(page).toHaveTitle(/Criar conta/);  
-  
 });
 
 // - criar conta nova e ficar logo autenticado
-test('create new account and stay logged in', async ({ page, registerPage }) => {
+test('create new account and stay logged in', {tag: '@smoke'}, async ({ page, registerPage }) => {
 
   const user = createUserData();
   
@@ -47,7 +57,7 @@ test('create new account and stay logged in', async ({ page, registerPage }) => 
   await registerPage.register(user.name, user.email, user.password, user.password);
 
   await expect(page.getByRole('heading', { name: 'As minhas tarefas' })).toBeVisible();  
-
+  await expect(page.getByTestId('user-name')).toContainText(user.name);
 });
 
 // - criar conta com email já existente

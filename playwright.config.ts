@@ -8,14 +8,22 @@ const TEST_PORT = 9100;
 // o Playwright testa esse servidor e não arranca o local.
 const EXTERNAL_URL = process.env.BASE_URL;
 
+const isCI = !!process.env.CI;
+
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
-  workers: process.env.CI ? 2 : 4,
-  reporter: 'html',
+  workers: isCI ? 2 : 4,  
+  forbidOnly: isCI,
+  retries: isCI ? 2 : 0,
+  reporter: isCI ? [ 
+    ['list'],
+    ['html', { open: 'never' }],
+    ['junit', { outputFile: 'test-results/junit.xml' }]
+  ]: 'html',
   use: {
     baseURL: EXTERNAL_URL || `http://localhost:${TEST_PORT}`,
-    trace: 'retain-on-failure',
+    trace: isCI ? 'on-first-retry' : 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
   projects: [
@@ -43,7 +51,7 @@ export default defineConfig({
       // Compila o frontend e arranca o servidor TypeScript diretamente com o tsx
       command: 'npm run build:client && tsx src/server.ts',
       url: `http://localhost:${TEST_PORT}/api/health`,
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: !isCI,
       env: {
         NODE_ENV: 'test', // ativa POST /api/test/reset
         PORT: String(TEST_PORT),

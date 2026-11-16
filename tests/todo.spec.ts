@@ -2,7 +2,7 @@ import { createTodoData } from '../factories/todoFactory';
 import { test, expect } from '../fixtures/index';
 
 
-test('show tasks heading after login', async ({ page, user }) => {
+test('show tasks heading after login', {tag: '@smoke'}, async ({ page, user }) => {
   
   await page.goto('/');
   await expect(page.getByTestId('user-name')).toContainText(user.name);
@@ -11,7 +11,7 @@ test('show tasks heading after login', async ({ page, user }) => {
 });
 
 
-test('add new task and check it appears in the list', async ({ user, todoPage }) => {
+test('add new task and check it appears in the list', {tag: '@smoke'}, async ({ user, todoPage }) => {
   const todoData = createTodoData();
 
   await todoPage.goto();
@@ -21,7 +21,7 @@ test('add new task and check it appears in the list', async ({ user, todoPage })
   await expect(todoPage.todoTitle.filter({ hasText: todoData.title })).toBeVisible();
 });
 
-test('add 4 tasks and check they appear in the list', async ({ page, todoPage, todo }) => {
+test('add 4 tasks and check they appear in the list', {tag: '@smoke'}, async ({ page, todoPage, todo }) => {
   for (let i = 0; i < 4; i++) {    
     await todo();
   }

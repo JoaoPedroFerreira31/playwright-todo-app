@@ -45,7 +45,7 @@ jobs:
         run: npm run test:smoke
 
       - name: Suite completa (master)
-        if: github.base_ref == 'master' 
+        if: github.event_name == 'push'
         run: npm run test
 
       - name: Guardar relatório

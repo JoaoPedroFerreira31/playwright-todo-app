@@ -11,7 +11,7 @@ test('show tasks heading after login', {tag: '@smoke'}, async ({ page, user }) =
 });
 
 
-test('add new task and check it appears in the list', {tag: '@smoke'}, async ({ user, todoPage }) => {
+test('add new task and check it appears in the list', {tag: '@smoke'}, async ({ user: _user, todoPage }) => {
   const todoData = createTodoData();
 
   await todoPage.goto();
@@ -21,7 +21,7 @@ test('add new task and check it appears in the list', {tag: '@smoke'}, async ({ 
   await expect(todoPage.todoTitle.filter({ hasText: todoData.title })).toBeVisible();
 });
 
-test('add 4 tasks and check they appear in the list', {tag: '@smoke'}, async ({ page, todoPage, todo }) => {
+test('add 4 tasks and check they appear in the list', {tag: '@smoke'}, async ({todoPage, todo }) => {
   for (let i = 0; i < 4; i++) {    
     await todo();
   }

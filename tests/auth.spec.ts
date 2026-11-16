@@ -20,7 +20,7 @@ test('login with wrong password shows error', async ({ request, loginPage }) => 
   await expect(loginPage.errorMessage).toHaveText('Email ou password incorretos.');
 });
 
-test('login with empty fields shows error', async ({ page, loginPage }) => {  
+test('login with empty fields shows error', async ({loginPage }) => {  
 
   await loginPage.goto();
   await loginPage.login('', '');

@@ -1,4 +1,5 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineOrgConfig, isCI } from '@org/pw-config';
+import { devices } from '@playwright/test';
 
 // Os testes usam um servidor e uma base de dados próprios (porta 9100, data/test.db),
 // para não mexerem nos dados com que trabalhas em `npm run dev` (porta 9000).
@@ -8,43 +9,12 @@ const TEST_PORT = 9100;
 // o Playwright testa esse servidor e não arranca o local.
 const EXTERNAL_URL = process.env.BASE_URL;
 
-const isCI = !!process.env.CI;
 
-export default defineConfig({
-  testDir: './tests',
-  fullyParallel: true,
-  workers: isCI ? 2 : 4,  
-  forbidOnly: isCI,
-  retries: isCI ? 2 : 0,
-  reporter: isCI ? [ 
-    ['list'],
-    ['html', { open: 'never' }],
-    ['junit', { outputFile: 'test-results/junit.xml' }]
-  ]: 'html',
+export default defineOrgConfig({
+  testDir: './tests',    
   use: {
-    baseURL: EXTERNAL_URL || `http://localhost:${TEST_PORT}`,
-    trace: isCI ? 'on-first-retry' : 'retain-on-failure',
-    screenshot: 'only-on-failure',
-  },
-  projects: [
-    // Padrão setup + storageState (ver tests/auth.setup.ts):
-    // { name: 'setup', testMatch: /.*\.setup\.ts/ },
-    // {
-    //   name: 'chromium',
-    //   use: { ...devices['Desktop Chrome'], storageState: 'playwright/.auth/user.json' },
-    //   dependencies: ['setup'],
-    // },
-
-    {
-      name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-      },
-    },
-    // Descomenta para testar noutros browsers (precisas de `npx playwright install`):
-    // { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-    // { name: 'webkit', use: { ...devices['Desktop Safari'] } },
-  ],
+    baseURL: EXTERNAL_URL || `http://localhost:${TEST_PORT}`,    
+  },  
   webServer: EXTERNAL_URL
     ? undefined
     : {

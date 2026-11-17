@@ -7,7 +7,7 @@ export default defineConfig(
     {
         ignores: [
             'node_modules/',
-            'dist/',
+            '**/dist/',
             'public/js/',
             'data/',
             'test-results/',

@@ -1,5 +1,5 @@
 import { test, expect } from '../fixtures/index';
-import { createUserData } from '../factories/userFactory';
+import { createUserData } from '@org/pw-fixtures';
 
 // Reset storage state for this file to avoid being authenticated
 test.use({ storageState: { cookies: [], origins: [] } });

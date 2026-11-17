@@ -1,6 +1,6 @@
 // Testes à API diretamente, sem browser, usando o fixture `request`.
 import { test, expect } from '@playwright/test';
-import { createUserData } from '../factories/userFactory';
+import { createUserData } from '@org/pw-fixtures';
 import { createTodoData } from '../factories/todoFactory';
 import type { Todo, TodoList } from '../src/types';
 

@@ -1,5 +1,4 @@
 import { defineOrgConfig, isCI } from '@org/pw-config';
-import { devices } from '@playwright/test';
 
 // Os testes usam um servidor e uma base de dados próprios (porta 9100, data/test.db),
 // para não mexerem nos dados com que trabalhas em `npm run dev` (porta 9000).

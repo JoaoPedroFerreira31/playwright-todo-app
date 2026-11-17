@@ -6,7 +6,7 @@
 
 import { test as setup, expect } from '@playwright/test';
 import path from 'path';
-import { createUserData } from '../factories/userFactory';
+import { createUserData } from '@org/pw-fixtures';
 
 const authFile = path.join(__dirname, '../playwright/.auth/user.json');
 

@@ -40,12 +40,7 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
 
-      - name: Smoke (PR)
-        if: github.event_name == 'pull_request'
-        run: npm run test:smoke
-
-      - name: Suite completa (master)
-        if: github.event_name == 'push'
+      - name: Testes (suite completa)
         run: npm run test
 
       - name: Guardar relatório

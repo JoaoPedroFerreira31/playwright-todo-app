@@ -5,7 +5,9 @@
   "engines": {
     "node": ">=22.13"
   },
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "dev": "concurrently -k -n server,client -c blue,green \"tsx watch --disable-warning=ExperimentalWarning src/server.ts\" \"tsc -p client --watch --preserveWatchOutput\"",
     "build": "npm run build:client && npm run build:server",
@@ -14,8 +16,8 @@
     "start": "node --disable-warning=ExperimentalWarning dist/server.js",
     "typecheck": "tsc -p tsconfig.json && tsc -p client --noEmit",
     "db:reset": "tsx --disable-warning=ExperimentalWarning src/scripts/reset-db.ts",
-    "test": "playwright test",
-    "test:smoke": "playwright test --grep @smoke",
+    "test": "bddgen && playwright test",
+    "test:smoke": "bddgen && playwright test --grep @smoke",
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
     "codegen": "playwright codegen http://localhost:3000",
@@ -29,16 +31,17 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
+    "@org/pw-config": "*",
+    "@org/pw-fixtures": "*",
     "@playwright/test": "^1.48.0",
     "@types/express": "^5.0.6",
     "@types/node": "^22.20.5",
     "concurrently": "^10.0.7",
     "eslint": "^9.39.5",
     "eslint-plugin-playwright": "^2.12.2",
+    "playwright-bdd": "^9.2.1",
     "tsx": "^4.23.15",
     "typescript": "~6.0.3",
-    "typescript-eslint": "^8.72.2",
-    "@org/pw-config": "*",
-    "@org/pw-fixtures": "*"
+    "typescript-eslint": "^8.72.2"
   }
 }

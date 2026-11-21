@@ -27,3 +27,4 @@ desktop.ini
 !.vscode/settings.json
 .idea/
 .claude/settings.local.json
+.features-gen/

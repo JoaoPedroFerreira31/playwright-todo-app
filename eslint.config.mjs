@@ -15,6 +15,7 @@ export default defineConfig(
             'blob-report/',
             'playwright/.cache/',
             'playwright/.auth/',
+            '.features-gen/'
         ],
     },
     js.configs.recommended,
